@@ -15,7 +15,7 @@ You should have received a copy of the GNU Affero General Public License
 along with this program. If not, see <https://www.gnu.org/licenses/>.
 */
 import { Link } from '@tanstack/react-router'
-import { ArrowRight, BookOpen, Loader2 } from 'lucide-react'
+import { ArrowRight, BookOpen, Loader2, RefreshCw } from 'lucide-react'
 import { PublicLayout } from '@/components/layout'
 import { Footer } from '@/components/layout/components/footer'
 import { cn } from '@/lib/utils'
@@ -169,12 +169,26 @@ export function DocPage({ slug }: { slug: string }) {
         <div className='py-16'>
           <h1 className='text-2xl font-semibold'>{title}</h1>
           <p className='text-muted-foreground mt-2'>
-            This guide could not be loaded.{' '}
-            <Link to='/resources' className='text-primary hover:underline'>
+            This guide could not be loaded
+            {doc.reason ? ` (${doc.reason})` : ''}. If you just updated the app,
+            this is usually a stale cache — retry, or hard-refresh the page.
+          </p>
+          <div className='mt-4 flex items-center gap-3'>
+            <button
+              type='button'
+              onClick={doc.reload}
+              className='bg-info/10 text-info hover:bg-info/20 inline-flex items-center gap-1.5 rounded-md px-3 py-1.5 text-sm font-medium transition-colors'
+            >
+              <RefreshCw className='size-4' />
+              Retry
+            </button>
+            <Link
+              to='/resources'
+              className='text-muted-foreground hover:text-foreground text-sm'
+            >
               Back to all integrations
             </Link>
-            .
-          </p>
+          </div>
         </div>
       )}
     </DocsShell>
