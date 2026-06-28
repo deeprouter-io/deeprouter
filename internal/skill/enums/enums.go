@@ -243,6 +243,7 @@ const (
 	EntryPointRecoCodownload     EntryPoint = "reco_codownload"
 	EntryPointLeaderboardWeekly  EntryPoint = "leaderboard_weekly"
 	EntryPointLeaderboardMonthly EntryPoint = "leaderboard_monthly"
+	EntryPointCategoryDemand     EntryPoint = "category_demand"
 	EntryPointDigest             EntryPoint = "digest"
 	EntryPointReengage           EntryPoint = "reengage"
 	EntryPointAdminPreview       EntryPoint = "admin_preview"
@@ -280,6 +281,7 @@ var validEntryPoints = map[EntryPoint]struct{}{
 	EntryPointRecoCodownload:     {},
 	EntryPointLeaderboardWeekly:  {},
 	EntryPointLeaderboardMonthly: {},
+	EntryPointCategoryDemand:     {},
 	EntryPointDigest:             {},
 	EntryPointReengage:           {},
 	EntryPointAdminPreview:       {},
