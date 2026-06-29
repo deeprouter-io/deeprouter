@@ -4,7 +4,7 @@
 > **Author**: Kaitao Lai + Claude
 > **Date**: 2026-06-27
 > **Owner**: DeepRouter Platform (Skill Marketplace)
-> **Ticket**: DR-1002
+> **Ticket**: DR-86
 > **Parent**: [`docs/tasks/dr63-public-routing-api-contract-prd.md`](./dr63-public-routing-api-contract-prd.md) · [`docs/tasks/dr79-publish-time-skill-packaging-prd.md`](./dr79-publish-time-skill-packaging-prd.md)
 > **范围**: 打包进 skill zip 的运行时客户端 `internal/skill/packageassets/runtime/deeprouter_skill_runner.py`
 
