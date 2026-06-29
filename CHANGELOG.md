@@ -4,7 +4,7 @@ DeepRouter gateway 变更记录。规则见 `AGENTS.md` Rule 10。
 
 ## 2026-06-29
 
-- 修复前端 dev server 启动失败：`@tanstack/router-plugin` 内嵌 `zod@3.25.76` 与 `@tanstack/router-generator` 使用的顶层 `zod@4.4.3` 实例不同，导致 `.extend()` 调用抛 `Invalid element at key "enableRouteGeneration"`；在 `package.json` 增加 `overrides: { "zod": "4.4.3" }` 并同步 `bun.lock` 消除嵌套副本（`web/default/package.json`, `web/default/bun.lock`）
+- 修复前端 dev server 启动失败：遗留 `node_modules/@tanstack/router-plugin/node_modules/zod@3.25.76` 目录（不在 lockfile 中，系旧版 install 遗留）与顶层 `zod@4.4.3` 并存，`configSchema.extend()` 跨实例调用抛 `Invalid element at key "enableRouteGeneration"`；lockfile 中 TanStack 两包均已声明 `zod: ^4.4.3`，正确修法是 `rm -rf` 该遗留目录（或全量重装），而非全局 override——全局 override 会将 `shadcn` 的合法嵌套 `zod@3.25.76` 一并移除，导致 shadcn 调用 `.deepPartial()` 崩溃（`web/default/bun.lock`）
 
 - 修复 PR #101 前端检查：补齐 `SkillDetail` 测试 fixture 的 `instructions` 字段，并同步 `SKILL_PLAN_REQUIRED` 断言到当前 Paywall 行为与 API mock（`web/default/src/features/marketplace/skill-detail.test.tsx`）
 - 修复 PR #72 Dashboard onboarding status banner 前端 typecheck：补齐 Marketplace pointer 图标导入并移除未使用 client slug helper（`web/default/src/features/dashboard/components/overview/onboarding-status-banner.tsx`）
