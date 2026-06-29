@@ -4,6 +4,8 @@ DeepRouter gateway 变更记录。规则见 `AGENTS.md` Rule 10。
 
 ## 2026-06-29
 
+- 修复前端 dev server 启动失败：`@tanstack/router-plugin` 内嵌 `zod@3.25.76` 与 `@tanstack/router-generator` 使用的顶层 `zod@4.4.3` 实例不同，导致 `.extend()` 调用抛 `Invalid element at key "enableRouteGeneration"`；在 `package.json` 增加 `overrides: { "zod": "4.4.3" }` 并同步 `bun.lock` 消除嵌套副本（`web/default/package.json`, `web/default/bun.lock`）
+
 - 修复 PR #101 前端检查：补齐 `SkillDetail` 测试 fixture 的 `instructions` 字段，并同步 `SKILL_PLAN_REQUIRED` 断言到当前 Paywall 行为与 API mock（`web/default/src/features/marketplace/skill-detail.test.tsx`）
 - 修复 PR #72 Dashboard onboarding status banner 前端 typecheck：补齐 Marketplace pointer 图标导入并移除未使用 client slug helper（`web/default/src/features/dashboard/components/overview/onboarding-status-banner.tsx`）
 - 修复 DR-88 `user_home` 归因入口未同步到前端增长入口类型与 `skill_usage_events` DB CHECK 约束，恢复 User Home 事件记录和 PR checks（`web/default/src/features/marketplace/types.ts`, `internal/skill/model/`）
