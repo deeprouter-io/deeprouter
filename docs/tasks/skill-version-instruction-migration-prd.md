@@ -1,6 +1,6 @@
 # Skill Version Instruction Migration PRD
 
-Status: eval
+Status: ship
 Date: 2026-06-30
 
 ## Problem
