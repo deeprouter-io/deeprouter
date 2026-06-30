@@ -1,6 +1,6 @@
 # DR-98 Referral Skill Purchase Grant Isolation PRD
 
-Status: eval
+Status: ship
 
 ## Context
 

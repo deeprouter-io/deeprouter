@@ -4,6 +4,7 @@ DeepRouter gateway 变更记录。规则见 `AGENTS.md` Rule 10。
 
 ## 2026-06-30
 
+- 更新 DR-98 Skill purchase referral 发奖隔离修复 PRD 状态为 ship，记录 PR #141 checks 通过并合并到 main（`docs/tasks/dr98-referral-skill-purchase-grant-isolation-prd.md`）
 - 修复 DR-98 one-time Skill purchase referral 发奖失败回滚购买的问题：购买事务提交后 best-effort 发奖并记录日志，补发奖失败不影响订单成功、entitlement 和扣款的回归测试（`internal/skill/handler/purchase.go`, `internal/skill/handler/purchase_test.go`）
 - 更新 DR-98 Skill purchase referral 发奖隔离修复 PRD 状态为 eval，进入 review/check 阶段（`docs/tasks/dr98-referral-skill-purchase-grant-isolation-prd.md`）
 - 新增 DR-98 Skill purchase referral 发奖隔离修复 PRD，明确发奖失败不得回滚购买、entitlement、扣款与订单成功态（`docs/tasks/dr98-referral-skill-purchase-grant-isolation-prd.md`）
