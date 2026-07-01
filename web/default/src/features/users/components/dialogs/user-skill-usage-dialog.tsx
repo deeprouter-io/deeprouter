@@ -227,6 +227,8 @@ function UsageContent({ usage }: { usage: UserSkillUsageResponse }) {
         />
       </div>
 
+      <UsageVisualSummary usage={usage} />
+
       <section className='border-border bg-card rounded-xl border'>
         <div className='border-border flex items-center justify-between gap-3 border-b px-4 py-3'>
           <div>
@@ -266,6 +268,167 @@ function UsageContent({ usage }: { usage: UserSkillUsageResponse }) {
           />
         )}
       </section>
+    </div>
+  )
+}
+
+function UsageVisualSummary({ usage }: { usage: UserSkillUsageResponse }) {
+  const { t } = useTranslation()
+  const totalInput = usage.downloads.reduce(
+    (sum, row) => sum + row.input_tokens,
+    0
+  )
+  const totalOutput = usage.downloads.reduce(
+    (sum, row) => sum + row.output_tokens,
+    0
+  )
+  const totalTokens = Math.max(totalInput + totalOutput, 1)
+  const inputPct = (totalInput / totalTokens) * 100
+  const outputPct = (totalOutput / totalTokens) * 100
+  const totalCost = usage.downloads.reduce(
+    (sum, row) => sum + (row.cost_usd ?? 0),
+    0
+  )
+  const recentEvents = usage.usage_timeline.slice(0, 8)
+  const successCount = usage.usage_timeline.filter(
+    (row) => row.success === true
+  ).length
+  const failedCount = usage.usage_timeline.filter(
+    (row) => row.success === false
+  ).length
+  const maxSkillTokens = Math.max(
+    ...usage.downloads.map((row) => row.total_tokens),
+    1
+  )
+
+  return (
+    <section
+      className='border-border bg-card rounded-xl border p-4'
+      aria-label={t('Skill usage visual summary')}
+    >
+      <div className='mb-4 flex flex-col gap-1 sm:flex-row sm:items-end sm:justify-between'>
+        <div>
+          <h3 className='text-sm font-semibold'>{t('Visual usage summary')}</h3>
+          <p className='text-muted-foreground text-xs'>
+            {t('Token split, estimated cost, and recent Skill activity')}
+          </p>
+        </div>
+        <div className='text-muted-foreground text-xs tabular-nums'>
+          {usage.usage_timeline.length} {t('events')}
+        </div>
+      </div>
+
+      <div className='grid gap-3 lg:grid-cols-[1fr_1fr_1.1fr]'>
+        <div className='border-border/70 rounded-lg border p-3'>
+          <div className='mb-3 flex items-center justify-between text-xs'>
+            <span className='text-muted-foreground'>{t('Token split')}</span>
+            <span className='font-mono font-semibold tabular-nums'>
+              {formatNumber(totalInput + totalOutput)}
+            </span>
+          </div>
+          <div className='bg-muted/40 flex h-8 overflow-hidden rounded-md'>
+            <div
+              className='bg-chart-1 h-full'
+              style={{ width: `${inputPct}%` }}
+            />
+            <div
+              className='bg-chart-2 h-full'
+              style={{ width: `${outputPct}%` }}
+            />
+          </div>
+          <div className='mt-3 grid grid-cols-2 gap-2 text-xs'>
+            <TokenLegend
+              label={t('Input')}
+              value={formatNumber(totalInput)}
+              className='bg-chart-1'
+            />
+            <TokenLegend
+              label={t('Output')}
+              value={formatNumber(totalOutput)}
+              className='bg-chart-2'
+            />
+          </div>
+        </div>
+
+        <div className='border-border/70 rounded-lg border p-3'>
+          <div className='text-muted-foreground mb-2 text-xs'>
+            {t('Estimated cost')}
+          </div>
+          <div className='font-mono text-2xl font-semibold tabular-nums'>
+            {formatUSD(totalCost)}
+          </div>
+          <div className='mt-4 flex h-12 items-end gap-1' aria-hidden='true'>
+            {usage.downloads.slice(0, 10).map((row) => (
+              <div
+                key={row.skill_id}
+                className='from-chart-4/80 via-chart-4/35 flex-1 rounded-t-sm bg-linear-to-t to-transparent'
+                style={{
+                  height: `${Math.max(12, (row.total_tokens / maxSkillTokens) * 100)}%`,
+                }}
+              />
+            ))}
+          </div>
+          <p className='text-muted-foreground mt-2 text-xs'>
+            {t('Per downloaded Skill token volume')}
+          </p>
+        </div>
+
+        <div className='border-border/70 rounded-lg border p-3'>
+          <div className='mb-3 flex items-center justify-between text-xs'>
+            <span className='text-muted-foreground'>
+              {t('Recent activity')}
+            </span>
+            <span className='font-mono tabular-nums'>
+              {successCount} {t('success')} / {failedCount} {t('failed')}
+            </span>
+          </div>
+          <div className='flex h-16 items-center gap-1.5'>
+            {recentEvents.length > 0 ? (
+              recentEvents.map((row) => (
+                <div
+                  key={row.event_id}
+                  className='flex flex-1 flex-col items-center gap-2'
+                  title={`${row.event_type} ${formatDateTime(row.occurred_at)}`}
+                >
+                  <div
+                    className={cn(
+                      'h-9 w-full rounded-md',
+                      row.success === false
+                        ? 'bg-chart-5/80'
+                        : row.success === true
+                          ? 'bg-chart-2/80'
+                          : 'bg-chart-1/50'
+                    )}
+                  />
+                  <div className='bg-muted-foreground/30 h-1.5 w-1.5 rounded-full' />
+                </div>
+              ))
+            ) : (
+              <div className='text-muted-foreground text-xs'>
+                {t('No recent events')}
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    </section>
+  )
+}
+
+function TokenLegend({
+  label,
+  value,
+  className,
+}: {
+  label: string
+  value: string
+  className: string
+}) {
+  return (
+    <div className='flex items-center gap-2'>
+      <span className={cn('h-2.5 w-2.5 rounded-full', className)} />
+      <span className='text-muted-foreground'>{label}</span>
+      <span className='ml-auto font-mono tabular-nums'>{value}</span>
     </div>
   )
 }

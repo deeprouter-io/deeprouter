@@ -4,8 +4,8 @@ SPDX-License-Identifier: AGPL-3.0-or-later
 */
 import type { LucideIcon } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
-import { Skeleton } from '@/components/ui/skeleton'
 import { cn } from '@/lib/utils'
+import { Skeleton } from '@/components/ui/skeleton'
 
 interface MetricCardProps {
   title: string
@@ -14,8 +14,18 @@ interface MetricCardProps {
   icon: LucideIcon
   loading?: boolean
   trackingFailed?: boolean
+  accentIndex?: number
   className?: string
 }
+
+const SPARKLINE_HEIGHTS = [34, 52, 44, 68, 58, 76, 48, 62, 86, 72, 56, 78]
+const ACCENT_CLASSES = [
+  'from-chart-1/80 via-chart-1/35',
+  'from-chart-2/80 via-chart-2/35',
+  'from-chart-3/80 via-chart-3/35',
+  'from-chart-4/80 via-chart-4/35',
+  'from-chart-5/80 via-chart-5/35',
+]
 
 export function MetricCard({
   title,
@@ -24,24 +34,24 @@ export function MetricCard({
   icon: Icon,
   loading,
   trackingFailed,
+  accentIndex = 0,
   className,
 }: MetricCardProps) {
   const { t } = useTranslation()
+  const accentClass = ACCENT_CLASSES[accentIndex % ACCENT_CLASSES.length]
 
-  const displayValue =
-    trackingFailed || value === null ? '—' : value
+  const displayValue = trackingFailed || value === null ? '—' : value
 
-  const displayDesc =
-    trackingFailed
-      ? t('Tracking unavailable')
-      : value === null
-        ? t('No data in this period')
-        : description
+  const displayDesc = trackingFailed
+    ? t('Tracking unavailable')
+    : value === null
+      ? t('No data in this period')
+      : description
 
   return (
     <div
       className={cn(
-        'bg-background/60 flex min-h-32 flex-col justify-between gap-3 rounded-xl border p-3',
+        'bg-background/60 flex min-h-32 flex-col justify-between gap-3 overflow-hidden rounded-xl border p-3',
         className
       )}
     >
@@ -76,13 +86,21 @@ export function MetricCard({
         </div>
       )}
 
-      {/* Placeholder sparkline bar so card height is consistent */}
-      <div className='flex h-8 items-end gap-1' aria-hidden='true'>
-        {Array.from({ length: 12 }).map((_, i) => (
+      <div
+        className='flex h-8 items-end gap-1'
+        aria-hidden='true'
+        data-testid='metric-card-visual'
+      >
+        {SPARKLINE_HEIGHTS.map((height, i) => (
           <span
             key={i}
-            className='flex-1 rounded-t-sm bg-linear-to-t from-muted-foreground/20 via-muted-foreground/10 to-transparent opacity-20'
-            style={{ height: '20%' }}
+            className={cn(
+              'flex-1 rounded-t-sm bg-linear-to-t to-transparent',
+              trackingFailed || value === null
+                ? 'from-muted-foreground/20 via-muted-foreground/10 opacity-25'
+                : accentClass
+            )}
+            style={{ height: `${height}%` }}
           />
         ))}
       </div>

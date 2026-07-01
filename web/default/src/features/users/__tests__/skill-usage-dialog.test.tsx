@@ -140,6 +140,25 @@ describe('DR-108 user Skill usage dialog', () => {
     expect(screen.getByText('Success')).toBeInTheDocument()
   })
 
+  it('renders visual token, cost, and activity summaries', async () => {
+    mockGetUserSkillUsage.mockResolvedValue({
+      data: consentedUsage,
+    })
+
+    renderWithQuery(
+      <UserSkillUsageDialog open onOpenChange={vi.fn()} user={baseUser} />
+    )
+
+    expect(await screen.findByText('Visual usage summary')).toBeInTheDocument()
+    expect(screen.getByText('Token split')).toBeInTheDocument()
+    expect(screen.getByText('Estimated cost')).toBeInTheDocument()
+    expect(screen.getByText('Recent activity')).toBeInTheDocument()
+    expect(
+      screen.getByText('Per downloaded Skill token volume')
+    ).toBeInTheDocument()
+    expect(screen.getByText('1 success / 0 failed')).toBeInTheDocument()
+  })
+
   it('overrides the base dialog width and keeps wide tables scrollable', async () => {
     mockGetUserSkillUsage.mockResolvedValue({
       data: consentedUsage,
