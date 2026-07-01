@@ -20,6 +20,7 @@ import userEvent from '@testing-library/user-event'
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { SkillAnalyticsDashboard } from '../index'
 import type {
+  SkillAnalyticsCategoryDemandResponse,
   SkillAnalyticsOverview,
   SkillAnalyticsSkillsResponse,
 } from '../types'
@@ -46,6 +47,9 @@ const mockGetMostSaved = vi.hoisted(() =>
     }) => Promise<SkillAnalyticsSkillsResponse>
   >()
 )
+const mockGetCategoryDemand = vi.hoisted(() =>
+  vi.fn<() => Promise<SkillAnalyticsCategoryDemandResponse>>()
+)
 
 // ── Module mocks ──────────────────────────────────────────────────────────────
 
@@ -53,6 +57,7 @@ vi.mock('../api', () => ({
   getSkillAnalyticsOverview: mockGetOverview,
   getSkillAnalyticsSkills: mockGetSkills,
   getMostSavedSkillAnalytics: mockGetMostSaved,
+  getCategoryDemandAnalytics: mockGetCategoryDemand,
 }))
 
 const translations: Record<string, string> = {
@@ -212,6 +217,24 @@ const MOST_SAVED: SkillAnalyticsSkillsResponse = {
   period_end: '2026-06-21T00:00:00.000Z',
 }
 
+const CATEGORY_DEMAND: SkillAnalyticsCategoryDemandResponse = {
+  period_end: FULL_DATA.period_end,
+  windows: ['7d', '30d'],
+  categories: [
+    {
+      category: 'writing',
+      downloads_7d: 12,
+      downloads_30d: 40,
+      successful_runs_7d: 31,
+      successful_runs_30d: 90,
+      demand_score_7d: 43,
+      demand_score_30d: 130,
+      trend_pct: 0.33,
+      hot: true,
+    },
+  ],
+}
+
 function makeClient() {
   return new QueryClient({
     defaultOptions: {
@@ -250,6 +273,7 @@ describe('SkillAnalyticsDashboard — integration', () => {
     vi.clearAllMocks()
     mockGetSkills.mockResolvedValue(SKILLS_DATA)
     mockGetMostSaved.mockResolvedValue(MOST_SAVED)
+    mockGetCategoryDemand.mockResolvedValue(CATEGORY_DEMAND)
   })
 
   afterEach(() => {
@@ -300,7 +324,7 @@ describe('SkillAnalyticsDashboard — integration', () => {
       'Median Time to First Use',
       'Revenue Attribution',
     ]) {
-      expect(screen.getByText(title)).toBeInTheDocument()
+      expect(screen.getAllByText(title).length).toBeGreaterThan(0)
     }
   })
 
@@ -309,21 +333,33 @@ describe('SkillAnalyticsDashboard — integration', () => {
     renderDashboard()
     await waitForDataReady()
     // formatNumber mock returns String(v); 4200 → "4200"
-    expect(screen.getByText('4200')).toBeInTheDocument()
+    expect(screen.getAllByText('4200').length).toBeGreaterThan(0)
+  })
+
+  it('renders the color-coded visual overview panel', async () => {
+    mockGetOverview.mockResolvedValue(FULL_DATA)
+    renderDashboard()
+    await waitForDataReady()
+
+    expect(screen.getByText('Visual usage overview')).toBeInTheDocument()
+    expect(screen.getByText('Activity mix')).toBeInTheDocument()
+    expect(screen.getByText('Conversion funnel')).toBeInTheDocument()
+    expect(screen.getByText('Active users')).toBeInTheDocument()
+    expect(screen.getByText('Skill runs')).toBeInTheDocument()
   })
 
   it('renders Enable Rate as percentage', async () => {
     mockGetOverview.mockResolvedValue(FULL_DATA)
     renderDashboard()
     await waitForDataReady()
-    expect(screen.getByText('61.9%')).toBeInTheDocument()
+    expect(screen.getAllByText('61.9%').length).toBeGreaterThan(0)
   })
 
   it('renders block_rate as percentage', async () => {
     mockGetOverview.mockResolvedValue(FULL_DATA)
     renderDashboard()
     await waitForDataReady()
-    expect(screen.getByText('3.0%')).toBeInTheDocument()
+    expect(screen.getAllByText('3.0%').length).toBeGreaterThan(0)
   })
 
   it('renders translated top_block_reason label', async () => {

@@ -2,9 +2,8 @@
 Copyright (C) 2026 DeepRouter
 SPDX-License-Identifier: AGPL-3.0-or-later
 */
-import { useEffect, useMemo, useState } from 'react'
-import { useQuery } from '@tanstack/react-query'
-import type { UseQueryResult } from '@tanstack/react-query'
+import { useEffect, useState } from 'react'
+import { useQuery, type UseQueryResult } from '@tanstack/react-query'
 import {
   Users,
   Play,
@@ -36,6 +35,7 @@ import { MetricCard } from './components/metric-card'
 import {
   type DateRangePreset,
   type SkillAnalyticsCategoryDemandResponse,
+  type SkillAnalyticsOverview,
   type SkillAnalyticsSkillsResponse,
   type SkillAnalyticsSkillRow,
   getDateRange,
@@ -69,6 +69,16 @@ function planLabel(plan: string): string {
   return plan.replaceAll('_', ' ')
 }
 
+function pctValue(value: number | null | undefined): number {
+  if (value == null || Number.isNaN(value)) return 0
+  return Math.max(0, Math.min(100, value * 100))
+}
+
+function scaledValue(value: number | null | undefined, max: number): number {
+  if (value == null || Number.isNaN(value) || max <= 0) return 0
+  return Math.max(8, Math.min(100, (value / max) * 100))
+}
+
 export function SkillAnalyticsDashboard() {
   const { t } = useTranslation()
   const [preset, setPreset] = useState<DateRangePreset>('7d')
@@ -81,24 +91,22 @@ export function SkillAnalyticsDashboard() {
     return () => window.clearInterval(id)
   }, [])
 
-  const range = useMemo(() => getDateRange(preset), [preset, refreshTick])
-
   const { data, isLoading, isError } = useQuery({
     queryKey: ['skill-analytics', 'overview', preset, refreshTick],
-    queryFn: () => getSkillAnalyticsOverview(range),
+    queryFn: () => getSkillAnalyticsOverview(getDateRange(preset)),
     staleTime: 5 * 60 * 1000,
     retry: 1,
   })
 
   const { data: skillsData, isLoading: skillsLoading } = useQuery({
     queryKey: ['skill-analytics', 'skills', preset, refreshTick],
-    queryFn: () => getSkillAnalyticsSkills(range),
+    queryFn: () => getSkillAnalyticsSkills(getDateRange(preset)),
     staleTime: 5 * 60 * 1000,
     retry: 1,
   })
   const mostSavedQuery = useQuery({
     queryKey: ['skill-analytics', 'most-saved', preset, refreshTick],
-    queryFn: () => getMostSavedSkillAnalytics(range),
+    queryFn: () => getMostSavedSkillAnalytics(getDateRange(preset)),
     staleTime: 5 * 60 * 1000,
     retry: 1,
   })
@@ -268,10 +276,17 @@ export function SkillAnalyticsDashboard() {
                   icon={card.icon}
                   loading={isLoading}
                   trackingFailed={trackingFailed}
+                  accentIndex={cards.indexOf(card)}
                 />
               </StaggerItem>
             ))}
           </StaggerContainer>
+
+          <SkillAnalyticsVisualOverview
+            data={data}
+            loading={isLoading}
+            trackingFailed={trackingFailed}
+          />
 
           <CategoryDemandPanel query={categoryDemandQuery} />
 
@@ -285,6 +300,154 @@ export function SkillAnalyticsDashboard() {
         </div>
       </SectionPageLayout.Content>
     </SectionPageLayout>
+  )
+}
+
+function SkillAnalyticsVisualOverview({
+  data,
+  loading,
+  trackingFailed,
+}: {
+  data?: SkillAnalyticsOverview
+  loading: boolean
+  trackingFailed: boolean
+}) {
+  const { t } = useTranslation()
+  const runMax = Math.max(data?.total_skill_runs ?? 0, data?.wasu ?? 0, 1)
+  const flow = [
+    {
+      label: t('Active users'),
+      value: fmtCount(data?.wasu ?? null) ?? '—',
+      width: scaledValue(data?.wasu, runMax),
+      className: 'bg-chart-1',
+    },
+    {
+      label: t('Skill runs'),
+      value: fmtCount(data?.total_skill_runs ?? null) ?? '—',
+      width: scaledValue(data?.total_skill_runs, runMax),
+      className: 'bg-chart-2',
+    },
+    {
+      label: t('Repeat users'),
+      value: formatPercent(data?.repeat_use_rate ?? null) ?? '—',
+      width: pctValue(data?.repeat_use_rate),
+      className: 'bg-chart-4',
+    },
+    {
+      label: t('Blocked'),
+      value: formatPercent(data?.block_rate ?? null) ?? '—',
+      width: pctValue(data?.block_rate),
+      className: 'bg-chart-5',
+    },
+  ]
+  const funnel = [
+    {
+      label: t('Detail CTR'),
+      value: formatPercent(data?.detail_ctr ?? null) ?? '—',
+      width: pctValue(data?.detail_ctr),
+      className: 'from-chart-1 to-chart-2',
+    },
+    {
+      label: t('Enable Rate'),
+      value: formatPercent(data?.enable_rate ?? null) ?? '—',
+      width: pctValue(data?.enable_rate),
+      className: 'from-chart-2 to-chart-3',
+    },
+    {
+      label: t('First Use Rate'),
+      value: formatPercent(data?.first_use_rate ?? null) ?? '—',
+      width: pctValue(data?.first_use_rate),
+      className: 'from-chart-4 to-chart-2',
+    },
+  ]
+
+  return (
+    <section
+      className='bg-background/60 rounded-xl border p-4'
+      aria-label={t('Skill analytics visual overview')}
+    >
+      <div className='mb-4 flex flex-col gap-1 sm:flex-row sm:items-end sm:justify-between'>
+        <div>
+          <h2 className='text-sm font-semibold'>
+            {t('Visual usage overview')}
+          </h2>
+          <p className='text-muted-foreground text-xs'>
+            {t('Color-coded Skill activity, conversion, and block signals')}
+          </p>
+        </div>
+        <div className='text-muted-foreground text-xs tabular-nums'>
+          {data?.period_start && data?.period_end
+            ? `${new Date(data.period_start).toLocaleDateString()} - ${new Date(
+                data.period_end
+              ).toLocaleDateString()}`
+            : t('Current range')}
+        </div>
+      </div>
+
+      {loading ? (
+        <div className='grid gap-3 lg:grid-cols-[1.2fr_0.8fr]'>
+          <div className='bg-muted/30 h-44 animate-pulse rounded-lg' />
+          <div className='bg-muted/30 h-44 animate-pulse rounded-lg' />
+        </div>
+      ) : trackingFailed ? (
+        <div className='border-border bg-muted/20 text-muted-foreground rounded-lg border p-4 text-sm'>
+          {t('Visuals are paused until fresh Skill tracking events arrive.')}
+        </div>
+      ) : (
+        <div className='grid gap-3 lg:grid-cols-[1.2fr_0.8fr]'>
+          <div className='border-border/70 rounded-lg border p-3'>
+            <div className='mb-3 flex items-center justify-between gap-3'>
+              <span className='text-sm font-semibold'>{t('Activity mix')}</span>
+              <span className='text-muted-foreground text-xs'>
+                {t('Relative scale')}
+              </span>
+            </div>
+            <div className='space-y-3'>
+              {flow.map((item) => (
+                <div key={item.label} className='grid gap-1.5'>
+                  <div className='flex items-center justify-between gap-3 text-xs'>
+                    <span className='text-muted-foreground'>{item.label}</span>
+                    <span className='font-mono font-semibold tabular-nums'>
+                      {item.value}
+                    </span>
+                  </div>
+                  <div className='bg-muted/40 h-3 overflow-hidden rounded-full'>
+                    <div
+                      className={`${item.className} h-full rounded-full`}
+                      style={{ width: `${item.width}%` }}
+                    />
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className='border-border/70 rounded-lg border p-3'>
+            <div className='mb-3 text-sm font-semibold'>
+              {t('Conversion funnel')}
+            </div>
+            <div className='space-y-2'>
+              {funnel.map((item) => (
+                <div key={item.label} className='space-y-1'>
+                  <div className='flex items-center justify-between gap-3 text-xs'>
+                    <span className='text-muted-foreground'>{item.label}</span>
+                    <span className='font-mono font-semibold tabular-nums'>
+                      {item.value}
+                    </span>
+                  </div>
+                  <div className='bg-muted/40 h-8 overflow-hidden rounded-md'>
+                    <div
+                      className={`h-full rounded-md bg-linear-to-r ${item.className}`}
+                      style={{ width: `${Math.max(6, item.width)}%` }}
+                    />
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+    </section>
   )
 }
 

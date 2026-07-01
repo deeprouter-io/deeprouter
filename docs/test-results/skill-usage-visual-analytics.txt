@@ -1,0 +1,131 @@
+# Skill Usage Visual Analytics Test Results
+
+Date: 2026-07-01
+
+Branch: feature/skill-usage-visual-analytics
+
+## Touched-file lint
+
+Command:
+
+`cd web/default && bunx eslint src/features/skill-analytics/index.tsx src/features/skill-analytics/components/metric-card.tsx src/features/skill-analytics/__tests__/dashboard.integration.test.tsx src/features/users/components/dialogs/user-skill-usage-dialog.tsx src/features/users/__tests__/skill-usage-dialog.test.tsx`
+
+Dataset / fixtures / mocks:
+
+- Touched Skill Analytics dashboard, metric card, Admin Skill usage dialog, and
+  related tests.
+
+Assertions:
+
+- No lint regression in new theme-token visual classes, query keys, chart-like
+  summary sections, or regression tests.
+
+Coverage:
+
+- Static lint only.
+
+Result:
+
+- PASS.
+
+## Focused frontend regression tests with coverage
+
+Command:
+
+`cd web/default && bunx vitest run src/features/skill-analytics/__tests__/dashboard.integration.test.tsx src/features/skill-analytics/__tests__/metric-card.test.tsx src/features/users/__tests__/skill-usage-dialog.test.tsx --coverage --coverage.include='src/features/skill-analytics/**' --coverage.include='src/features/users/components/dialogs/user-skill-usage-dialog.tsx' --reporter=verbose`
+
+Dataset / fixtures / mocks:
+
+- Mocked Skill Analytics overview, per-Skill analytics, most-saved Skills, and
+  category demand responses.
+- Mocked Admin user Skill usage response with one downloaded Skill and one
+  usage timeline event.
+
+Assertions:
+
+- Skill Analytics renders the visual usage overview, activity mix, conversion
+  funnel, and colored metric card mini bars while preserving existing metric,
+  stale tracking, date range, monetization, and table behavior.
+- Admin Skill usage dialog renders visual token split, estimated cost, recent
+  activity summary, and still preserves consent gate, API error, row action, and
+  horizontal table scroll behavior.
+
+Coverage:
+
+- Aggregate scoped coverage: 85.97% statements, 78.15% branches, 92.18%
+  functions, 88.35% lines.
+- `skill-analytics/index.tsx`: 96.82% statements, 88.8% branches, 100%
+  functions, 98.07% lines.
+- `user-skill-usage-dialog.tsx`: 82.85% statements, 55.69% branches, 96.29%
+  functions, 88.88% lines.
+
+Result:
+
+- PASS: 3 test files / 42 tests.
+
+## Frontend typecheck
+
+Command:
+
+`cd web/default && bun run typecheck`
+
+Dataset / fixtures / mocks:
+
+- Full `web/default` TypeScript project.
+
+Assertions:
+
+- New visual components, i18n keys, tests, and query key changes compile.
+
+Coverage:
+
+- Typecheck only.
+
+Result:
+
+- PASS.
+
+## Frontend production build
+
+Command:
+
+`cd web/default && bun run build`
+
+Dataset / fixtures / mocks:
+
+- Full `web/default` production bundle.
+
+Assertions:
+
+- Rsbuild production bundle succeeds with the new Skill Analytics and Admin
+  Skill usage visuals.
+
+Coverage:
+
+- Build validation only.
+
+Result:
+
+- PASS.
+
+## Full frontend test suite
+
+Command:
+
+`cd web/default && bun run test`
+
+Dataset / fixtures / mocks:
+
+- Existing configured Vitest suite with jsdom setup.
+
+Assertions:
+
+- No frontend regression across existing web/default tests.
+
+Coverage:
+
+- No coverage flag for this command.
+
+Result:
+
+- PASS: 20 test files / 190 tests.
