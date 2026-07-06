@@ -2,6 +2,10 @@
 
 DeepRouter gateway 变更记录。规则见 `AGENTS.md` Rule 10。
 
+## 2026-07-07
+
+- 前端主题出厂默认值从 `classic` 改为 `default`：全新部署（空数据库）时直接渲染新版 React 19 界面，不再回退到 legacy classic 主题；数据库 `theme.frontend` 选项仍可覆盖（`setting/system_setting/theme.go`, `common/constants.go`）
+
 ## 2026-07-06
 
 - 更新 README Skill Marketplace 章节：从"已完成 PRD 设计，待实现"改为已实现状态，补充市场门户/分层定价/使用时鉴权/Skill 包下载与 runner telemetry/隐私 analytics/运营增长/管理端工具的真实功能描述、路由与代码位置，标注后续规划（用户上传、创作者分成），并同步更新"What I Built"表、Repository Map 和 Status 列表（`README.md`, `README.zh-CN.md`）
