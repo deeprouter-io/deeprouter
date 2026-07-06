@@ -2,6 +2,10 @@
 
 DeepRouter gateway 变更记录。规则见 `AGENTS.md` Rule 10。
 
+## 2026-07-06
+
+- 更新 README Skill Marketplace 章节：从"已完成 PRD 设计，待实现"改为已实现状态，补充市场门户/分层定价/使用时鉴权/Skill 包下载与 runner telemetry/隐私 analytics/运营增长/管理端工具的真实功能描述、路由与代码位置，标注后续规划（用户上传、创作者分成），并同步更新"What I Built"表、Repository Map 和 Status 列表（`README.md`, `README.zh-CN.md`）
+
 ## 2026-07-01
 
 - 修复 Skill Analytics 与 Admin Skill usage 彩色可视化中固定柱状图可能误导为真实趋势的问题：百分比 Metric card 改为实心单色浅深半圆进度，计数 Metric card 改为单位图标，Activity mix / Conversion funnel 改为单色浅深渐变，Admin 弹窗改为基于真实 token totals 的 Top Skill token share，并更新回归测试（`web/default/src/features/skill-analytics/components/metric-card.tsx`, `web/default/src/features/users/components/dialogs/user-skill-usage-dialog.tsx`）
