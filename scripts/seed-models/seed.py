@@ -79,6 +79,8 @@ class AdminClient:
             "Authorization": f"Bearer {self.admin_token}",
             "New-Api-User": os.environ.get("DEEPROUTER_USER_ID", "1"),
             "Content-Type": "application/json",
+            # Cloudflare 会拦默认的 Python-urllib UA（403）
+            "User-Agent": "deeprouter-seed/1.0",
         }
         body = json.dumps(payload).encode("utf-8") if payload is not None else None
         req = urllib.request.Request(url, data=body, headers=headers, method=method)

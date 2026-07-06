@@ -4,6 +4,7 @@ DeepRouter gateway 变更记录。规则见 `AGENTS.md` Rule 10。
 
 ## 2026-07-07
 
+- 修复 seed 脚本在 Cloudflare 代理的实例上全部 403 的问题：`Python-urllib` 默认 UA 被 Cloudflare bot 防护拦截，两个脚本统一改发 `User-Agent: deeprouter-seed/1.0`（`scripts/seed-models/seed.py`, `scripts/seed-models/seed_options.py`）
 - 前端主题出厂默认值从 `classic` 改为 `default`：全新部署（空数据库）时直接渲染新版 React 19 界面，不再回退到 legacy classic 主题；数据库 `theme.frontend` 选项仍可覆盖（`setting/system_setting/theme.go`, `common/constants.go`）
 
 ## 2026-07-06
