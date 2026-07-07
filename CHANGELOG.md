@@ -4,6 +4,7 @@ DeepRouter gateway 变更记录。规则见 `AGENTS.md` Rule 10。
 
 ## 2026-07-08
 
+- 更新 README 产品演示缩略图：改用 YouTube demo 02:40 时间点截图并链接到对应播放位置（`README.md`, `docs/images/deeprouter-youtube-demo-0240.png`）
 - 更新 README 顶部产品演示入口，加入 DeepRouter YouTube demo 缩略图、链接与精简说明（`README.md`）
 
 ## 2026-07-07
