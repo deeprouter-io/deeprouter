@@ -4387,6 +4387,7 @@
     "Warning: Base URL should not end with /v1. New API will handle it automatically. This may cause request failures.": "Warning: Base URL should not end with /v1. New API will handle it automatically. This may cause request failures.",
     "Warning: Disabling 2FA will make your account less secure.": "Warning: Disabling 2FA will make your account less secure.",
     "Warning: This action is permanent and irreversible!": "Warning: This action is permanent and irreversible!",
+    "Watch demo": "Watch demo",
     "Watch the 3-minute tutorial": "Watch the 3-minute tutorial",
     "We apologize for the inconvenience.": "We apologize for the inconvenience.",
     "We could not load the setup status.": "We could not load the setup status.",

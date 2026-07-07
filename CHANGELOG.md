@@ -4,6 +4,7 @@ DeepRouter gateway 变更记录。规则见 `AGENTS.md` Rule 10。
 
 ## 2026-07-08
 
+- 新增首页产品演示视频入口：Hero CTA 区域加入 `Watch demo` 次级按钮，跳转到 YouTube demo 02:40 时间点，并补任务 PRD、首页回归测试与中英文文案（`docs/tasks/homepage-demo-video-entry-prd.md`, `web/default/src/features/home/components/sections/hero.tsx`, `web/default/src/features/home/components/sections/hero.test.tsx`, `web/default/src/i18n/locales/`）
 - 更新 README 产品演示缩略图：改用 YouTube demo 02:40 时间点截图并链接到对应播放位置（`README.md`, `docs/images/deeprouter-youtube-demo-0240.png`）
 - 更新 README 顶部产品演示入口，加入 DeepRouter YouTube demo 缩略图、链接与精简说明（`README.md`）
 

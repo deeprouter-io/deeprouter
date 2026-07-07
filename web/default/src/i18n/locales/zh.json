@@ -4387,6 +4387,7 @@
     "Warning: Base URL should not end with /v1. New API will handle it automatically. This may cause request failures.": "警告：基础 URL 不应以 /v1 结尾。New API 将自动处理它。这可能会导致请求失败。",
     "Warning: Disabling 2FA will make your account less secure.": "警告：禁用双重身份验证将使您的账户安全性降低。",
     "Warning: This action is permanent and irreversible!": "警告：此操作是永久且不可逆的！",
+    "Watch demo": "观看演示",
     "Watch the 3-minute tutorial": "看 3 分钟视频教程",
     "We apologize for the inconvenience.": "对于由此造成的不便，我们深表歉意。",
     "We could not load the setup status.": "我们无法加载设置状态。",
