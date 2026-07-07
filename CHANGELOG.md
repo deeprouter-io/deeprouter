@@ -2,6 +2,10 @@
 
 DeepRouter gateway 变更记录。规则见 `AGENTS.md` Rule 10。
 
+## 2026-07-08
+
+- 更新 README 顶部产品演示入口，加入 DeepRouter YouTube demo 缩略图、链接与精简说明（`README.md`）
+
 ## 2026-07-07
 
 - 修复 seed 脚本在 Cloudflare 代理的实例上全部 403 的问题：`Python-urllib` 默认 UA 被 Cloudflare bot 防护拦截，两个脚本统一改发 `User-Agent: deeprouter-seed/1.0`（`scripts/seed-models/seed.py`, `scripts/seed-models/seed_options.py`）

@@ -10,6 +10,14 @@
 
 </div>
 
+## Product Demo
+
+[![DeepRouter product demo](https://img.youtube.com/vi/9PlYZl8BpE0/maxresdefault.jpg)](https://www.youtube.com/watch?v=9PlYZl8BpE0)
+
+Watch the product walkthrough: [DeepRouter — Intelligent LLM Routing Platform with Skills Marketplace](https://www.youtube.com/watch?v=9PlYZl8BpE0).
+
+The demo shows how DeepRouter works as an intelligent LLM routing platform and OpenRouter alternative: one gateway for OpenAI, Anthropic, Gemini, DeepSeek, and other major providers, with model selection that balances cost, latency, performance, fallback handling, and operational visibility. It also introduces the Skills Marketplace direction, where developers can publish, discover, and monetize reusable AI skills that run on top of DeepRouter's routing layer.
+
 ---
 
 ## Why This Project Exists
