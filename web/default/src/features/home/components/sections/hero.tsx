@@ -24,6 +24,7 @@ import {
   Cpu,
   Gauge,
   Globe2,
+  PlayCircle,
   ShieldCheck,
   Sparkles,
   Wallet,
@@ -69,6 +70,8 @@ const HERO_BENEFITS = [
     label: '25+ models',
   },
 ] as const
+
+const DEMO_VIDEO_URL = 'https://www.youtube.com/watch?v=9PlYZl8BpE0&t=160s'
 
 interface HeroProps {
   className?: string
@@ -186,12 +189,42 @@ export function Hero(props: HeroProps) {
                 <Button
                   className='h-11 px-5'
                   variant='outline'
+                  render={
+                    <a
+                      href={DEMO_VIDEO_URL}
+                      target='_blank'
+                      rel='noopener noreferrer'
+                    />
+                  }
+                >
+                  <PlayCircle className='mr-1 size-3.5' />
+                  {t('Watch demo')}
+                </Button>
+                <Button
+                  className='h-11 px-5'
+                  variant='outline'
                   render={<Link to='/pricing' />}
                 >
                   {t('View Pricing')}
                 </Button>
               </>
             )}
+            {props.isAuthenticated ? (
+              <Button
+                className='h-11 px-5'
+                variant='outline'
+                render={
+                  <a
+                    href={DEMO_VIDEO_URL}
+                    target='_blank'
+                    rel='noopener noreferrer'
+                  />
+                }
+              >
+                <PlayCircle className='mr-1 size-3.5' />
+                {t('Watch demo')}
+              </Button>
+            ) : null}
           </div>
 
           <div
